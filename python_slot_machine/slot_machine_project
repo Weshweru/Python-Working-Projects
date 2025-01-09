@@ -1,0 +1,81 @@
+import random
+
+def spin_row():
+    symbols = ["🍎", "🍋", "🌲", "💥", "💖"]
+    return [random.choice(symbols) for _ in range(3)]
+
+def print_row(row):
+    print("************")
+    print(" | ".join(row))
+    print("************")
+
+def get_payout(row, bet):
+    if row[0] == row[1] == row[2]:  # Jackpot condition
+        payout = bet * 10
+        print("🎉 Jackpot! You won $", payout)
+        return payout
+    elif row[0] == row[1] or row[1] == row[2] or row[0] == row[2]:  # Partial match
+        payout = bet * 5
+        print("🎉 You won $", payout)
+        return payout
+    else:  # No win
+        print("😞 You lost. Try again!")
+        return 0
+
+def main():
+    balance = 100  # Initial balance
+    print("******************************")
+    print("🎰 Welcome to the Slot Machine!")
+    print("******************************")
+    print("Symbols: 🍎, 🍋, 🌲, 💥, 💖")
+    
+    while balance > 0:
+        print(f"Current balance: ${balance}")
+        
+        bet = input("Place your bet: ").strip()
+        
+        if not bet.isdigit():  # Check if input is numeric
+            print("⚠️ Please enter a valid number.")
+            continue
+        
+        bet = int(bet)
+        
+        if bet > balance:  # Bet exceeds balance
+            print("⚠️ Insufficient funds. Try a smaller amount.")
+            continue
+        
+        if bet <= 0:  # Invalid bet amount
+            print("⚠️ Bet must be greater than 0.")
+            continue
+        
+        balance -= bet  # Deduct bet from balance
+        
+        row = spin_row()  # Spin the slot machine
+        
+        print("Spinning...\n")
+        print_row(row)
+        
+        payout = get_payout(row, bet)  # Calculate payout
+        
+        if payout > 0:
+            print(f"🎉 You won ${payout}!")
+        else:
+            print("😞 Sorry, you lost this round.")
+        
+        balance += payout  # Update balance with payout
+        
+        if balance == 0:  # Check if the player is out of money
+            print("😞 You're out of money! Game over!")
+            break
+        
+        play_again = input("Do you want to play again (Y/N)? ").strip().upper()
+        
+        if play_again == "N":  # Exit game
+            print("Thank you for playing! Goodbye!")
+            break
+        elif play_again != "Y":  # Handle invalid input
+            print("⚠️ Invalid input. Exiting the game.")
+            break
+
+if __name__ == "__main__":
+    main()
