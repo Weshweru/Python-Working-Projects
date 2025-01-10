@@ -1,0 +1,91 @@
+# This is a game to display a hanging man
+import random
+
+# Word list
+words = ["apple", "banana", "coconut", "pineapple", "orange"]
+
+# Hanging man stages (dictionary)
+hanging_man = {
+    0: ("   ", "   ", "   "),
+    1: ("  0", "   ", "   "),
+    2: ("  0", "  |", "   "),
+    3: ("  0", " /|", "   "),
+    4: ("  0", " /|\\", "   "),
+    5: ("  0", " /|\\", " / "),
+    6: ("  0", " /|\\", " / \\"),
+}
+
+
+def display_man(wrong_guess):
+    """Display the current state of the hanging man."""
+    for line in hanging_man[wrong_guess]:
+        print(line)
+
+
+def display_hint(hint):
+    """Display the hint with dashes and guessed letters."""
+    print("Current Word: ", " ".join(hint))
+
+
+def display_answer(answer):
+    """Display the correct answer."""
+    print("The correct word was: ", answer)
+
+
+def main():
+    answer = random.choice(words)  # Randomly select a word
+    hint = ["-"] * len(answer)  # Initialize the hint with dashes
+    wrong_guess = 0  # Counter for wrong guesses
+    guessed_letters = set()  # Store guessed letters
+    is_running = True  # Game state
+    
+    print("Welcome to the Hanging Man Game!")
+    print("Guess the word before the man gets hanged!\n")
+
+    while is_running:
+        display_man(wrong_guess)  # Show the current state of the hanging man
+        display_hint(hint)  # Show the current hint
+        
+        # Input for the player's guess
+        guess = input("Enter your guess (a single letter): ").lower()
+        
+        # Validate the guess
+        if len(guess) != 1 or not guess.isalpha():
+            print("⚠️ Invalid input! Please enter a single letter.\n")
+            continue
+        
+        # Check if the letter was already guessed
+        if guess in guessed_letters:
+            print(f"⚠️ You already guessed '{guess}'. Try a different letter!\n")
+            continue
+        
+        # Add the guess to the set of guessed letters
+        guessed_letters.add(guess)
+        
+        # Check if the guess is in the answer
+        if guess in answer:
+            print(f"✅ Good job! '{guess}' is in the word.\n")
+            # Update the hint with the guessed letter
+            for i in range(len(answer)):
+                if answer[i] == guess:
+                    hint[i] = guess
+        else:
+            print(f"❌ Sorry, '{guess}' is not in the word.\n")
+            wrong_guess += 1  # Increment wrong guesses
+        
+        # Check win condition
+        if "-" not in hint:
+            print("\n🎉 Congratulations! You've guessed the word!")
+            display_answer("".join(answer))
+            is_running = False
+        
+        # Check loss condition
+        if wrong_guess >= 6:
+            print("\n💀 Game over! You've been hanged!")
+            display_man(wrong_guess)
+            display_answer("".join(answer))
+            is_running = False
+
+
+if __name__ == "__main__":
+    main()
